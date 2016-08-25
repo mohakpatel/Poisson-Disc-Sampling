@@ -41,16 +41,23 @@ function [pts] = poissonDisc(sizeI,spacing,nPts,showIter)
 
 % Mohak Patel, Brown University, 2016
 
+%%%%%%% Initial parameters setup
+% Parsing inputs and setting default values
+if nargin == 3; showIter = 0; end
+if nargin == 2; showIter = 0; nPts = 0; end
 
-% Parsing inputs
-
-
+% Setting properties for iterations
 ndim = length(sizeI);   % Number of Dimensions
-k = 7;  % Number of darts try
+k = 5;  % Number of 'dart' tries in each grid.
+dartFactor = 4; %Select number of sample data in each iterations. Change it to
+% reduce run time for code. Have to play around with number. 
 
-%Make Grid such that there is just one pt in each grid
+
+%%%%%%% Making Grid read for iterations
+%Make grid size such that there is just one pt in each grid
 dm = spacing/sqrt(ndim);    % grize cell size [Bridson 2007]
 
+%Make Grid
 for i = 1:ndim
     sGrid{1,i} = 1:dm:sizeI(i);
 end
@@ -63,35 +70,47 @@ for i = 1:ndim
 end
 sGrid = cell2mat(sGrid);
 
-% Structures for available grids
-emptyGrid = logical(ones(size(sGrid,1),1));
-nEmptyGrid = sum(emptyGrid);
-scoreGrid = zeros(size(emptyGrid));
+% Arrays to show eligible grids for dart throws and keeping score of darts
+% thrown in a particular grid
+emptyGrid = logical(ones(size(sGrid,1),1)); %Eligible Grids
+nEmptyGrid = sum(emptyGrid);    %Number of eligible Grids
+scoreGrid = zeros(size(emptyGrid)); %Score of darts thrown in Grid
+
+% Darts to be thrown per iterations
+% This hugely influences speed of the algorithm. Change dartFactor for it. 
 if nPts == 0
-    nPts = length(sGrid);
-    sampleSize = round(nEmptyGrid/4);
+    nPts = nEmptyGrid;
+    ndarts = round(nEmptyGrid/dartFactor);
 end
-sampleSize = round(nPts/4);
-% While loop parameter initialization
+ndarts = round(nPts/dartFactor);
+
+%%%%%%%%% Iterative process to generate points
+% Initialize parameters
 ptsCreated = 0;
 pts = [];
 iter = 0;
 
 % Start Iterative process
 tic
-while ptsCreated<nPts & nEmptyGrid >0 & iter<2000
+while ptsCreated<nPts & nEmptyGrid >0
     
-    availGrid = find(emptyGrid == 1);
-    dataPts = min([nEmptyGrid,sampleSize]);
-    p = datasample(availGrid,dataPts,'Replace',false);
-    tempPts = sGrid(p,:) + dm*rand(length(p),ndim);
-    [~,D] = knnsearch([pts;tempPts],tempPts,'k',2);
-    D = D(:,2);
+    %Thrown darts in eligible grids
+    availGrid = find(emptyGrid == 1);   %Eligible grids for dart throw
+    dataPts = min([nEmptyGrid,ndarts]); % Darts to be thrown
+    p = datasample(availGrid,dataPts,'Replace',false); %Select grids for darts
+    tempPts = sGrid(p,:) + dm*rand(length(p),ndim); %Dart throw!!!
     
-    withinI = logical(prod(bsxfun(@lt,tempPts,sizeI),2)); %Eligible pts should be withing size 
-    eligiblePts = withinI & D>spacing; %Withing Ptsand spacing should be less than D
-    scorePts = tempPts(~eligiblePts,:);
-    tempPts = tempPts(eligiblePts,:);
+    
+    % Find good dart throws
+    [~,D] = knnsearch([pts;tempPts],tempPts,'k',2); %Finding distance between all darts(pts)
+    D = D(:,2); 
+
+    withinI = logical(prod(bsxfun(@lt,tempPts,sizeI),2)); %Eligible pts should be withing sizeI 
+    eligiblePts = withinI & D>spacing; %elgible pts should also have minimum separation distance
+    
+    scorePts = tempPts(~eligiblePts,:); %Keep score from bad dart throws :(
+    tempPts = tempPts(eligiblePts,:);   % Save good dart throws :)
+    
     
     %Update empty Grid
     emptyPts = floor((tempPts+dm-1)/dm);
@@ -105,20 +124,24 @@ while ptsCreated<nPts & nEmptyGrid >0 & iter<2000
     scoreIdx = sub2ind(sizeGrid,scorePts{:});
     scoreGrid(scoreIdx) = scoreGrid(scoreIdx) + 1;
     
-    %emptyGrid update based on score too
+    %Update emptyGrid if scoreGrid has exceeded k dart throws
     emptyGrid = emptyGrid & (scoreGrid<k);
     
+    %Update quantities for next iterations
     nEmptyGrid = sum(emptyGrid);
     pts = [pts;tempPts];
     ptsCreated = size(pts,1);
     iter = iter+1;
     ttoc = toc;
+    
+    %Display iteration details
     if showIter == 1
-        disp(sprintf('Iteration: %d    Points Created: %d   EmptyGrid:%d   Time: %0.3f',iter,ptsCreated,nEmptyGrid,ttoc));
+        disp(sprintf('Iteration: %d    Points Created: %d    EmptyGrid:%d    Total Time: %0.3f',iter,ptsCreated,nEmptyGrid,ttoc));
     end
     
 end
 
+% Cut down pts if more points are generated
 if size(pts,1)>nPts
     p = 1:size(pts,1);
     p = datasample(p,nPts,'Replace',false);
