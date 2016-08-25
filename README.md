@@ -1,6 +1,8 @@
 # Poisson-Disc-Sampling
 Matlab script for N-dimensional Poisson-Disc Sampling. This can also be used this to randomly sample k pts from N-dimensional space with minimum separation distance between the points.
 
+###Download
+[Download the latest version v1.0](https://github.com/mohakpatel/Poisson-Disc-Sampling/releases)
 
 ### Inputs:  
 * sizeI -    [required] Size of volume from which points are to be sampled  
@@ -13,20 +15,20 @@ Matlab script for N-dimensional Poisson-Disc Sampling. This can also be used thi
 
 
 ## Example:
-1. Poisson disc sampling in 2D space.  
+* Poisson disc sampling in 2D space.  
 ```matlab
 sizeI = [512,512];  
 spacing = 30;  
 pts = poissonDisc(sizeI,spacing);  
 ```
-2. Sample k-pts in 3D space.  
+* Sample k-pts in 3D space.  
 ```matlab
 sizeI = [512,512,192];  
 spacing = 6;  
 nPts = 10000;  
 pts = poissonDisc(sizeI,nPts,spacing);  
 ```
-3. Show iteration progress from poisson disc sampling in 2D  
+* Show iteration progress from poisson disc sampling in 2D  
 ```matlab
 sizeI = [512,512];  
 spacing = 6;  
