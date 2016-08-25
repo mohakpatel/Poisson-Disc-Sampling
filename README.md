@@ -13,20 +13,24 @@ Matlab script for N-dimensional Poisson-Disc Sampling. This can also be used thi
 
 
 ## Example:
-1. Poisson disc sampling in 2-dimensional space.  
+1. Poisson disc sampling in 2D space.  
+```matlab
 sizeI = [512,512];  
 spacing = 30;  
 pts = poissonDisc(sizeI,spacing);  
-
-2. Sample k-pts in 3-dimensional space.  
+```
+2. Sample k-pts in 3D space.  
+```matlab
 sizeI = [512,512,192];  
 spacing = 6;  
 nPts = 10000;  
 pts = poissonDisc(sizeI,nPts,spacing);  
-
-3. Show iteration progress from poisson disc sampling in 2-dimension  
+```
+3. Show iteration progress from poisson disc sampling in 2D  
+```matlab
 sizeI = [512,512];  
 spacing = 6;  
 nPts = 0;  
 showIter = 1;  
 pts = poissonDisc(sizeI,nPts,spacing,showIter);  
+```
