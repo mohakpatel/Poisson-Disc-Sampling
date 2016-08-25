@@ -30,14 +30,14 @@ function [pts] = poissonDisc(sizeI,spacing,nPts,showIter)
 % sizeI = [512,512,192];
 % spacing = 6;
 % nPts = 10000;
-% pts = poissonDisc(sizeI,nPts,spacing);
+% pts = poissonDisc(sizeI,spacing,nPts);
 % 
 % 3. Show iteration progress from poisson disc sampling in 2-dimension
 % sizeI = [512,512];
 % spacing = 6;
 % nPts = 0;
 % showIter = 1;
-% pts = poissonDisc(sizeI,nPts,spacing,showIter);
+% pts = poissonDisc(sizeI,spacing,nPts,showIter);
 
 % Mohak Patel, Brown University, 2016
 

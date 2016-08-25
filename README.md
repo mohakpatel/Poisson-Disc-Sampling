@@ -26,7 +26,7 @@ pts = poissonDisc(sizeI,spacing);
 sizeI = [512,512,192];  
 spacing = 6;  
 nPts = 10000;  
-pts = poissonDisc(sizeI,nPts,spacing);  
+pts = poissonDisc(sizeI,spacing,nPts);  
 ```
 * Show iteration progress from poisson disc sampling in 2D  
 ```matlab
@@ -34,5 +34,5 @@ sizeI = [512,512];
 spacing = 6;  
 nPts = 0;  
 showIter = 1;  
-pts = poissonDisc(sizeI,nPts,spacing,showIter);  
+pts = poissonDisc(sizeI,spacing,nPts,showIter);  
 ```
