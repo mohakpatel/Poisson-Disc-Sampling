@@ -5,7 +5,7 @@ function [pts] = poissonDisc(sizeI,spacing,nPts,showIter)
 % randomly sample k pts from N-dimensional space with a minimum separation
 % distance.
 %
-% Input:
+% Inputs:
 % sizeI -   [required] Size of volume from which points are to be 
 %           sampled
 % spacing - [required] Minimum sepration distance between points
@@ -16,7 +16,7 @@ function [pts] = poissonDisc(sizeI,spacing,nPts,showIter)
 %            see how points are generated through each iteration. It can be
 %            useful when code is taking a long time to generate points. 
 %
-% Outputs:
+% Output:
 % pts - All eligible points
 %
 %
